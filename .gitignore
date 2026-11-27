@@ -33,3 +33,6 @@ logs/
 *.db-wal
 *.db-shm
 
+
+# Testes locais de migracao
+Server/auth-server-test.js
