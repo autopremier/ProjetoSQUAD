@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "api_version": "v26.0",
+  "accounts": [
+    {
+      "brand": "Kia",
+      "username": "SEU_USUARIO_INSTAGRAM",
+      "ig_user_id": "SEU_IG_USER_ID",
+      "access_token": "COLE_O_TOKEN_SOMENTE_NO_SEU_PC"
+    }
+  ]
+}

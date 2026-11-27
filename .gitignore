@@ -1,0 +1,35 @@
+﻿
+# Dependencias
+node_modules/
+
+# Compilacao
+dist/
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+
+# Cloudflare
+.wrangler/
+
+# Arquivos enviados
+uploads/
+
+# Logs
+logs/
+*.log
+
+# Credenciais
+.env
+.env.*
+!.env.example
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
