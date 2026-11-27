@@ -14,8 +14,12 @@ try {
 }
 
 const app = express();
-const PORT = 3001;
-const ADMIN_PASSWORD = process.env.PLANNER_ADMIN_PASSWORD || "35249112";
+const PORT = Number(process.env.PORT || 3001);
+// Bloqueia a publicacao enquanto SQLite e uploads locais estiverem ativos.
+if (process.env.RENDER === "true" || process.env.NODE_ENV === "production") {
+    throw new Error("Migracao cloud incompleta: backend SQLite local nao autorizado para producao.");
+}
+const ADMIN_PASSWORD = process.env.PLANNER_ADMIN_PASSWORD || "";
 
 const WEATHER_LOCATION = {
     city: "Joinville",
@@ -4002,6 +4006,7 @@ function getCreativeDeliveriesForContent(contentId) {
 
 
 function validateAdmin(password) {
+    if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 16) return false;
     const received = Buffer.from(String(password || ""));
     const expected = Buffer.from(String(ADMIN_PASSWORD || ""));
     if (received.length !== expected.length) return false;
@@ -4014,8 +4019,8 @@ function normalizePassword(password) {
 
 function validateNewPassword(password) {
     const value = normalizePassword(password);
-    if (value.length < 4) {
-        return "A senha precisa ter pelo menos 4 caracteres.";
+    if (value.length < 12) {
+        return "A senha precisa ter pelo menos 12 caracteres.";
     }
     if (value.length > 128) {
         return "A senha é muito longa.";
@@ -5917,6 +5922,8 @@ app.get("/api/auth/users", (req, res) => {
 
 app.post("/api/auth/setup-password", (req, res) => {
     try {
+        hydrateRequestSessions(req);
+        if (!requireAdminRequest(req, res)) return;
         const userId = Number(req.body?.user_id);
         const password = normalizePassword(req.body?.password);
         const confirmPassword = normalizePassword(req.body?.confirm_password);
@@ -6005,7 +6012,6 @@ app.get("/api/status", (req, res) => {
     res.json({
         status: "online",
         app: "SQUAD Social Planner",
-        database: databasePath,
         meta_configured: loadMetaConfig().enabled,
         time: new Date().toISOString(),
     });
